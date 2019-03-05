@@ -5,7 +5,7 @@
 - swagger2(SpringFox) 2.9.2
 
 # 2. 使用说明
-## 2.1 引入依赖(没有上传大maven仓库)
+## 2.1 引入依赖(没有上传maven仓库)
 ```xml
 <dependency>
 	    <groupId>com.jason.sbstarter</groupId>
