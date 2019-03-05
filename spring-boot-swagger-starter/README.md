@@ -11,7 +11,7 @@
     <groupId>com.jason.sbstarter</groupId>
     <artifactId>spring-boot-swagger-starter</artifactId>
     <version>${version}</version>
-</dependency
+</dependency>
 ```
 ## 2. 在应用主类中增加@EnableSwagger2注解
 ```java
