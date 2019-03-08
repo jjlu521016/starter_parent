@@ -1,9 +1,6 @@
 package com.jason.sbstarter.swagger.handler;
 
 import com.jason.sbstarter.swagger.properties.SwaggerProperties;
-import com.jason.sbstarter.swagger.bean.GlobalOperationParameter;
-import com.jason.sbstarter.swagger.bean.GlobalResponseMessage;
-import com.jason.sbstarter.swagger.bean.GlobalResponseMessageBody;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMethod;
 import springfox.documentation.builders.ParameterBuilder;
@@ -21,13 +18,13 @@ import java.util.stream.Collectors;
 
 public class GlobalResponsehandler {
     public static List<Parameter> buildGlobalOperationParameters(
-            List<GlobalOperationParameter> globalOperationParameters) {
+            List<SwaggerProperties.GlobalOperationParameter> globalOperationParameters) {
         List<Parameter> parameters = new ArrayList();
 
         if (Objects.isNull(globalOperationParameters)) {
             return parameters;
         }
-        for (GlobalOperationParameter globalOperationParameter : globalOperationParameters) {
+        for (SwaggerProperties.GlobalOperationParameter globalOperationParameter : globalOperationParameters) {
             parameters.add(new ParameterBuilder()
                     .name(globalOperationParameter.getName())
                     .description(globalOperationParameter.getDescription())
@@ -48,7 +45,7 @@ public class GlobalResponsehandler {
      */
     public static void buildGlobalResponseMessage(SwaggerProperties swaggerProperties, Docket docketForBuilder) {
 
-        GlobalResponseMessage globalResponseMessages =
+        SwaggerProperties.GlobalResponseMessage globalResponseMessages =
                 swaggerProperties.getGlobalResponseMessage();
 
         // POST,GET,PUT,PATCH,DELETE,HEAD,OPTIONS,TRACE 响应消息体
@@ -78,9 +75,9 @@ public class GlobalResponsehandler {
      * @param globalResponseMessageBodyList 全局Code消息返回集合
      * @return
      */
-    public static List<ResponseMessage> getResponseMessageList(List<GlobalResponseMessageBody> globalResponseMessageBodyList) {
+    public static List<ResponseMessage> getResponseMessageList(List<SwaggerProperties.GlobalResponseMessageBody> globalResponseMessageBodyList) {
         List<ResponseMessage> responseMessages = new ArrayList<>();
-        for (GlobalResponseMessageBody globalResponseMessageBody : globalResponseMessageBodyList) {
+        for (SwaggerProperties.GlobalResponseMessageBody globalResponseMessageBody : globalResponseMessageBodyList) {
             ResponseMessageBuilder responseMessageBuilder = new ResponseMessageBuilder();
             responseMessageBuilder.code(globalResponseMessageBody.getCode()).message(globalResponseMessageBody.getMessage());
 
@@ -101,21 +98,21 @@ public class GlobalResponsehandler {
      * @return
      */
     public static List<Parameter> assemblyGlobalOperationParameters(
-            List<GlobalOperationParameter> globalOperationParameters,
-            List<GlobalOperationParameter> docketOperationParameters) {
+            List<SwaggerProperties.GlobalOperationParameter> globalOperationParameters,
+            List<SwaggerProperties.GlobalOperationParameter> docketOperationParameters) {
 
         if (Objects.isNull(docketOperationParameters) || docketOperationParameters.isEmpty()) {
             return buildGlobalOperationParameters(globalOperationParameters);
         }
 
         Set<String> docketNames = docketOperationParameters.stream()
-                .map(GlobalOperationParameter::getName)
+                .map(SwaggerProperties.GlobalOperationParameter::getName)
                 .collect(Collectors.toSet());
 
-        List<GlobalOperationParameter> resultOperationParameters = new ArrayList();
+        List<SwaggerProperties.GlobalOperationParameter> resultOperationParameters = new ArrayList();
 
         if (Objects.nonNull(globalOperationParameters)) {
-            for (GlobalOperationParameter parameter : globalOperationParameters) {
+            for (SwaggerProperties.GlobalOperationParameter parameter : globalOperationParameters) {
                 if (!docketNames.contains(parameter.getName())) {
                     resultOperationParameters.add(parameter);
                 }

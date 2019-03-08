@@ -3,10 +3,6 @@ package com.jason.sbstarter.swagger.handler;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.jason.sbstarter.swagger.properties.SwaggerProperties;
-import com.jason.sbstarter.swagger.bean.ContactNew;
-import com.jason.sbstarter.swagger.bean.DocketInfo;
-import com.jason.sbstarter.swagger.bean.DocketParamInfo;
-import com.jason.sbstarter.swagger.bean.GlobalOperationParameter;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.util.StringUtils;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -42,7 +38,7 @@ public class GroupDocketHandler {
         List<Parameter> globalOperationParameters = GlobalResponsehandler.buildGlobalOperationParameters(
                 swaggerProperties.getGlobalOperationParameters());
 
-        DocketParamInfo docketParamInfo = new DocketParamInfo();
+        SwaggerProperties.DocketParamInfo docketParamInfo = new SwaggerProperties.DocketParamInfo();
         docketParamInfo.setBasePath(swaggerProperties.getBasePath());
         docketParamInfo.setExcludePath(swaggerProperties.getExcludePath());
         docketParamInfo.setBasePackage(swaggerProperties.getBasePackage());
@@ -57,17 +53,17 @@ public class GroupDocketHandler {
 
     public static List<Docket> hasGroup(SwaggerProperties swaggerProperties, ConfigurableBeanFactory configurableBeanFactory) {
         List<Docket> docketList = new LinkedList<>();
-        Map<String, DocketInfo> docketMap = swaggerProperties.getDocket();
+        Map<String, SwaggerProperties.DocketInfo> docketMap = swaggerProperties.getDocket();
 
         for (String groupName : docketMap.keySet()) {
-            DocketInfo docketInfo = swaggerProperties.getDocket().get(groupName);
+            SwaggerProperties.DocketInfo docketInfo = swaggerProperties.getDocket().get(groupName);
             ApiInfo apiInfo = apiInfoBuilder(swaggerProperties, docketInfo);
-            List<GlobalOperationParameter> swGlobalParameters = swaggerProperties.getGlobalOperationParameters();
-            List<GlobalOperationParameter> docketGlobalParameters = docketInfo.getGlobalOperationParameters();
+            List<SwaggerProperties.GlobalOperationParameter> swGlobalParameters = swaggerProperties.getGlobalOperationParameters();
+            List<SwaggerProperties.GlobalOperationParameter> docketGlobalParameters = docketInfo.getGlobalOperationParameters();
             List<Parameter> globalOperationParameters = GlobalResponsehandler.assemblyGlobalOperationParameters(swGlobalParameters,
                     docketGlobalParameters);
 
-            DocketParamInfo docketParamInfo = new DocketParamInfo();
+            SwaggerProperties.DocketParamInfo docketParamInfo = new SwaggerProperties.DocketParamInfo();
             docketParamInfo.setBasePath(docketInfo.getBasePath());
             docketParamInfo.setGroupName(groupName);
             docketParamInfo.setExcludePath(docketInfo.getExcludePath());
@@ -83,14 +79,14 @@ public class GroupDocketHandler {
     }
 
 
-    private static ApiInfo apiInfoBuilder(SwaggerProperties swaggerProperties, DocketInfo docketInfo) {
+    private static ApiInfo apiInfoBuilder(SwaggerProperties swaggerProperties, SwaggerProperties.DocketInfo docketInfo) {
         Contact contact = null;
         if (null == docketInfo) {
-            contact = new Contact(swaggerProperties.getContactNew().getName(),
-                    swaggerProperties.getContactNew().getUrl(),
-                    swaggerProperties.getContactNew().getEmail());
+            contact = new Contact(swaggerProperties.getContact().getName(),
+                    swaggerProperties.getContact().getUrl(),
+                    swaggerProperties.getContact().getEmail());
         } else {
-            contact = buildContact(docketInfo, swaggerProperties.getContactNew());
+            contact = buildContact(docketInfo, swaggerProperties.getContact());
         }
         return new ApiInfoBuilder()
                 .contact(contact)
@@ -103,11 +99,11 @@ public class GroupDocketHandler {
                 .build();
     }
 
-    private static Contact buildContact(DocketInfo docketInfo, ContactNew contactNew) {
+    private static Contact buildContact(SwaggerProperties.DocketInfo docketInfo, SwaggerProperties.Contact contactNew) {
         return new Contact(
-                docketInfo.getContact().getName().isEmpty() ? contactNew.getName() : docketInfo.getContact().getName(),
-                docketInfo.getContact().getUrl().isEmpty() ? contactNew.getUrl() : docketInfo.getContact().getUrl(),
-                docketInfo.getContact().getEmail().isEmpty() ? contactNew.getEmail() : docketInfo.getContact().getEmail()
+                StringUtils.isEmpty(docketInfo.getContact().getName()) ? contactNew.getName() : docketInfo.getContact().getName(),
+                StringUtils.isEmpty(docketInfo.getContact().getUrl()) ? contactNew.getUrl() : docketInfo.getContact().getUrl(),
+                StringUtils.isEmpty(docketInfo.getContact().getEmail()) ? contactNew.getEmail() : docketInfo.getContact().getEmail()
         );
     }
 
@@ -120,7 +116,7 @@ public class GroupDocketHandler {
     }
 
 
-    private static Docket docketBuildrOperation(DocketParamInfo docketParamInfo, ApiInfo apiInfo, SwaggerProperties swaggerProperties) {
+    private static Docket docketBuildrOperation(SwaggerProperties.DocketParamInfo docketParamInfo, ApiInfo apiInfo, SwaggerProperties swaggerProperties) {
 
         // base-path处理 没有配置任何path的时候，解析/**
         if (docketParamInfo.getBasePath().isEmpty()) {

@@ -1,7 +1,5 @@
 package com.jason.sbstarter.swagger.config;
 
-import com.jason.sbstarter.swagger.bean.DocketInfo;
-import com.jason.sbstarter.swagger.bean.UIConfig;
 import com.jason.sbstarter.swagger.handler.GroupDocketHandler;
 import com.jason.sbstarter.swagger.properties.SwaggerProperties;
 import org.springframework.beans.BeansException;
@@ -22,9 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Configuration
-@Import({
-        Swagger2Configuration.class
-})
+@Import({Swagger2Configuration.class})
 public class SwaggerAutoConfig implements BeanFactoryAware {
 
     private BeanFactory beanFactory;
@@ -43,7 +39,7 @@ public class SwaggerAutoConfig implements BeanFactoryAware {
 
     @Bean
     public UiConfiguration uiConfiguration(SwaggerProperties swaggerProperties) {
-        UIConfig uiConfig = swaggerProperties.getUiConfig();
+        SwaggerProperties.UIConfig uiConfig = swaggerProperties.getUiConfig();
         return UiConfigurationBuilder.builder()
                 .deepLinking(uiConfig.getDeepLinking())
                 .defaultModelExpandDepth(uiConfig.getDefaultModelExpandDepth())
@@ -66,7 +62,7 @@ public class SwaggerAutoConfig implements BeanFactoryAware {
     @ConditionalOnProperty(name = "swagger.enabled", matchIfMissing = true)
     public List<Docket> createRestApi(SwaggerProperties swaggerProperties) {
         ConfigurableBeanFactory configurableBeanFactory = (ConfigurableBeanFactory) beanFactory;
-        Map<String, DocketInfo> docketMap = swaggerProperties.getDocket();
+        Map<String, SwaggerProperties.DocketInfo> docketMap = swaggerProperties.getDocket();
         if (docketMap.size() == 0) {
             //没有设置分组
             return GroupDocketHandler.noGroup(swaggerProperties, configurableBeanFactory);

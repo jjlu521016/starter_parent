@@ -1,6 +1,6 @@
 package com.jason.sbstarter.swagger.handler;
 
-import com.jason.sbstarter.swagger.bean.Authorization;
+import com.jason.sbstarter.swagger.properties.SwaggerProperties;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class Authhandler {
 
-    public static ApiKey apiKey(Authorization authorization) {
+    public static ApiKey apiKey(SwaggerProperties.Authorization authorization) {
         return new ApiKey(authorization.getName(),
                 authorization.getKeyName(),
                 ApiKeyVehicle.HEADER.getValue());
@@ -25,7 +25,7 @@ public class Authhandler {
      *
      * @return
      */
-    public static SecurityContext securityContext(Authorization authorization) {
+    public static SecurityContext securityContext(SwaggerProperties.Authorization authorization) {
         return SecurityContext.builder()
                 .securityReferences(defaultAuth(authorization))
                 .forPaths(PathSelectors.regex(authorization.getAuthRegex()))
@@ -37,7 +37,7 @@ public class Authhandler {
      *
      * @return
      */
-    private static List<SecurityReference> defaultAuth(Authorization authorization) {
+    private static List<SecurityReference> defaultAuth(SwaggerProperties.Authorization authorization) {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;

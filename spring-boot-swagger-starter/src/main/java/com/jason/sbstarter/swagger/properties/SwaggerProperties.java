@@ -1,13 +1,14 @@
 package com.jason.sbstarter.swagger.properties;
 
-import com.jason.sbstarter.swagger.bean.Authorization;
-import com.jason.sbstarter.swagger.bean.ContactNew;
-import com.jason.sbstarter.swagger.bean.DocketInfo;
-import com.jason.sbstarter.swagger.bean.GlobalOperationParameter;
-import com.jason.sbstarter.swagger.bean.GlobalResponseMessage;
-import com.jason.sbstarter.swagger.bean.UIConfig;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import springfox.documentation.service.Parameter;
+import springfox.documentation.swagger.web.DocExpansion;
+import springfox.documentation.swagger.web.ModelRendering;
+import springfox.documentation.swagger.web.OperationsSorter;
+import springfox.documentation.swagger.web.TagsSorter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import java.util.Map;
  */
 @Component
 @ConfigurationProperties("swagger")
+@Data
 public class SwaggerProperties implements Serializable {
     /**
      * 是否开启swagger
@@ -71,7 +73,7 @@ public class SwaggerProperties implements Serializable {
      */
     private List<Class<?>> ignoredParameterTypes = new ArrayList<>();
 
-    private ContactNew contactNew = new ContactNew();
+    private Contact contact = new Contact();
 
     /**
      * 解析的url
@@ -113,155 +115,288 @@ public class SwaggerProperties implements Serializable {
      **/
     private Authorization authorization = new Authorization();
 
-    public Boolean getEnabled() {
-        return enabled;
+
+    /**
+     * @author JasonLu
+     */
+    @Data
+    @NoArgsConstructor
+    public static class Contact implements Serializable {
+
+
+        private static final long serialVersionUID = -372421614509053212L;
+
+        private String name;
+        private String url;
+        private String email;
+
     }
 
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    @Data
+    @NoArgsConstructor
+    public static class DocketInfo implements Serializable {
+
+
+        private static final long serialVersionUID = 1992824650531028895L;
+        /**
+         * 标题
+         **/
+        private String title = "";
+        /**
+         * 描述
+         **/
+        private String description = "";
+        /**
+         * 版本
+         **/
+        private String version = "";
+        /**
+         * 许可证
+         **/
+        private String license = "";
+        /**
+         * 许可证URL
+         **/
+        private String licenseUrl = "";
+        /**
+         * 服务条款URL
+         **/
+        private String termsOfServiceUrl = "";
+
+        private io.swagger.models.Contact contact = new io.swagger.models.Contact();
+
+        /**
+         * swagger会解析的包路径
+         **/
+        private String basePackage = "";
+
+        /**
+         * swagger会解析的url规则
+         **/
+        private List<String> basePath = new ArrayList<>();
+        /**
+         * 在basePath基础上需要排除的url规则
+         **/
+        private List<String> excludePath = new ArrayList<>();
+
+        private List<GlobalOperationParameter> globalOperationParameters;
+
+        /**
+         * 忽略的参数类型
+         **/
+        private List<Class<?>> ignoredParameterTypes = new ArrayList<>();
     }
 
-    public String getBasePackage() {
-        return basePackage;
+    @Data
+    @NoArgsConstructor
+    public static class DocketParamInfo implements Serializable {
+
+
+        private static final long serialVersionUID = -818353949655464421L;
+        /**
+         * 解析的url
+         */
+        private List<String> basePath = new ArrayList<>();
+
+        /**
+         * 在basePath中排除的url
+         */
+        private List<String> excludePath = new ArrayList<>();
+
+        /**
+         * 全局参数配置
+         **/
+        private List<Parameter> globalOperationParameters;
+
+
+        /**
+         *
+         */
+        private String groupName;
+
+        /**
+         * 需要配置的basePackage
+         */
+        private String basePackage = "";
+
+        /**
+         * 忽略参数类型
+         */
+        private List<Class<?>> ignoredParameterTypes = new ArrayList<>();
     }
 
-    public void setBasePackage(String basePackage) {
-        this.basePackage = basePackage;
+    @Data
+    @NoArgsConstructor
+    public class GlobalOperationParameter implements Serializable {
+
+        private static final long serialVersionUID = -2956353065902392944L;
+        /**
+         * 参数名
+         **/
+        private String name;
+
+        /**
+         * 描述信息
+         **/
+        private String description;
+
+        /**
+         * 指定参数类型
+         **/
+        private String modelRef;
+
+        /**
+         * 参数放在哪个地方:header,query,path,body.form
+         **/
+        private String parameterType;
+
+        /**
+         * 参数是否必须传
+         **/
+        private String required;
     }
 
-    public String getTitle() {
-        return title;
+    @Data
+    @NoArgsConstructor
+    public class GlobalResponseMessage implements Serializable {
+
+
+        private static final long serialVersionUID = -8762843045350035681L;
+        /**
+         * POST 响应消息体
+         **/
+        List<GlobalResponseMessageBody> post = new ArrayList<>();
+
+        /**
+         * GET 响应消息体
+         **/
+        List<GlobalResponseMessageBody> get = new ArrayList<>();
+
+        /**
+         * PUT 响应消息体
+         **/
+        List<GlobalResponseMessageBody> put = new ArrayList<>();
+
+        /**
+         * PATCH 响应消息体
+         **/
+        List<GlobalResponseMessageBody> patch = new ArrayList<>();
+
+        /**
+         * DELETE 响应消息体
+         **/
+        List<GlobalResponseMessageBody> delete = new ArrayList<>();
+
+        /**
+         * HEAD 响应消息体
+         **/
+        List<GlobalResponseMessageBody> head = new ArrayList<>();
+
+        /**
+         * OPTIONS 响应消息体
+         **/
+        List<GlobalResponseMessageBody> options = new ArrayList<>();
+
+        /**
+         * TRACE 响应消息体
+         **/
+        List<GlobalResponseMessageBody> trace = new ArrayList<>();
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    @Data
+    @NoArgsConstructor
+    public static class GlobalResponseMessageBody implements Serializable {
+
+        private static final long serialVersionUID = 4148865467485801281L;
+        /**
+         * 响应码
+         **/
+        private int code;
+
+        /**
+         * 响应消息
+         **/
+        private String message;
+
+        /**
+         * 响应体
+         **/
+        private String modelRef;
     }
 
-    public String getDescription() {
-        return description;
+    @Data
+    @NoArgsConstructor
+    public static class UIConfig implements Serializable {
+
+
+        private static final long serialVersionUID = 6920835960053111075L;
+        private String apiSorter = "alpha";
+
+        /**
+         * 是否启用json编辑器
+         **/
+        private Boolean jsonEditor = false;
+        /**
+         * 是否显示请求头信息
+         **/
+        private Boolean showRequestHeaders = true;
+        /**
+         * 支持页面提交的请求类型
+         **/
+        private String submitMethods = "get,post,put,delete,patch";
+        /**
+         * 请求超时时间
+         **/
+        private Long requestTimeout = 10000L;
+
+        private Boolean deepLinking;
+        private Boolean displayOperationId;
+        private Integer defaultModelsExpandDepth;
+        private Integer defaultModelExpandDepth;
+        private ModelRendering defaultModelRendering;
+
+        /**
+         * 是否显示请求耗时，默认false
+         */
+        private Boolean displayRequestDuration = true;
+        /**
+         * 可选 none | list
+         */
+        private DocExpansion docExpansion;
+        /**
+         * Boolean=false OR String
+         */
+        private Object filter;
+        private Integer maxDisplayedTags;
+        private OperationsSorter operationsSorter;
+        private Boolean showExtensions;
+        private TagsSorter tagsSorter;
+
+        /**
+         * Network
+         */
+        private String validatorUrl;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @Data
+    @NoArgsConstructor
+    public static class Authorization implements Serializable {
 
-    public String getVersion() {
-        return version;
-    }
 
-    public void setVersion(String version) {
-        this.version = version;
-    }
+        private static final long serialVersionUID = -7081557268618888471L;
+        /**
+         * 鉴权策略ID，对应 SecurityReferences ID
+         */
+        private String name = "Authorization";
 
-    public String getLicense() {
-        return license;
-    }
+        /**
+         * 鉴权传递的Header参数
+         */
+        private String keyName = "TOKEN";
 
-    public void setLicense(String license) {
-        this.license = license;
-    }
-
-    public String getLicenseUrl() {
-        return licenseUrl;
-    }
-
-    public void setLicenseUrl(String licenseUrl) {
-        this.licenseUrl = licenseUrl;
-    }
-
-    public String getTermsServiceUrl() {
-        return termsServiceUrl;
-    }
-
-    public void setTermsServiceUrl(String termsServiceUrl) {
-        this.termsServiceUrl = termsServiceUrl;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public List<Class<?>> getIgnoredParameterTypes() {
-        return ignoredParameterTypes;
-    }
-
-    public void setIgnoredParameterTypes(List<Class<?>> ignoredParameterTypes) {
-        this.ignoredParameterTypes = ignoredParameterTypes;
-    }
-
-    public ContactNew getContactNew() {
-        return contactNew;
-    }
-
-    public void setContactNew(ContactNew contactNew) {
-        this.contactNew = contactNew;
-    }
-
-    public List<String> getBasePath() {
-        return basePath;
-    }
-
-    public void setBasePath(List<String> basePath) {
-        this.basePath = basePath;
-    }
-
-    public List<String> getExcludePath() {
-        return excludePath;
-    }
-
-    public void setExcludePath(List<String> excludePath) {
-        this.excludePath = excludePath;
-    }
-
-    public Map<String, DocketInfo> getDocket() {
-        return docket;
-    }
-
-    public void setDocket(Map<String, DocketInfo> docket) {
-        this.docket = docket;
-    }
-
-    public List<GlobalOperationParameter> getGlobalOperationParameters() {
-        return globalOperationParameters;
-    }
-
-    public void setGlobalOperationParameters(List<GlobalOperationParameter> globalOperationParameters) {
-        this.globalOperationParameters = globalOperationParameters;
-    }
-
-    public UIConfig getUiConfig() {
-        return uiConfig;
-    }
-
-    public void setUiConfig(UIConfig uiConfig) {
-        this.uiConfig = uiConfig;
-    }
-
-    public Boolean getApplyDefaultResponseMessages() {
-        return applyDefaultResponseMessages;
-    }
-
-    public void setApplyDefaultResponseMessages(Boolean applyDefaultResponseMessages) {
-        this.applyDefaultResponseMessages = applyDefaultResponseMessages;
-    }
-
-    public GlobalResponseMessage getGlobalResponseMessage() {
-        return globalResponseMessage;
-    }
-
-    public void setGlobalResponseMessage(GlobalResponseMessage globalResponseMessage) {
-        this.globalResponseMessage = globalResponseMessage;
-    }
-
-    public Authorization getAuthorization() {
-        return authorization;
-    }
-
-    public void setAuthorization(Authorization authorization) {
-        this.authorization = authorization;
+        /**
+         * 需要开启鉴权URL的正则
+         */
+        private String authRegex = "^.*$";
     }
 }
